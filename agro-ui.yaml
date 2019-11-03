@@ -1,0 +1,65 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agro-ui
+  labels:
+    app: agro-ui
+    service: agro-ui
+spec:
+  ports:
+  - port: 3333
+    name: http
+  selector:
+    app: agro-ui
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: agro-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agro-ui-v1
+  labels:
+    app: agro-ui
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agro-ui
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: agro-ui
+        version: v1
+    spec:
+      serviceAccountName: agro-ui
+      containers:
+        - name: agro-ui
+          image: registro.love.42ndstudio.com/knowledgenetworkco/agro-ui:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3333
+      imagePullSecrets:
+        - name: registry42
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: agro-ui
+  namespace: knowledgeprojects
+  labels:
+    app: agro-ui
+spec:
+  rules:
+  - host: agro.knowledgenetwork.co
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: agro-ui
+          servicePort: 3333
