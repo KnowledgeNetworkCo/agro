@@ -51,7 +51,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: agro-ui
-  namespace: knowledgeprojects
+  namespace: know
   labels:
     app: agro-ui
 spec:
